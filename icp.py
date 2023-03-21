@@ -55,6 +55,10 @@ def gen_obj_depth(obj_id, depth, mask):
     """
     # TODO
     obj_depth = None
+    if obj_id == -1:
+        obj_depth = np.where(mask != 0, depth, 0)
+    else:
+        obj_depth = np.where(mask == obj_id, depth, 0)
     return obj_depth
 
 

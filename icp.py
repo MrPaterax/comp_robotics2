@@ -135,7 +135,7 @@ def estimate_pose(depth, mask, camera, view_matrix):
     for i in range(1,6):
         world_pts = obj_depth2pts(i, depth, mask, camera, view_matrix)
         first_cloud = obj_mesh2pts(i, len(world_pts))
-        list_obj_pose.append(align_pts(first_cloud, world_pts))
+        list_obj_pose.append(align_pts(first_cloud, world_pts, 100, 1e-20))
     return list_obj_pose
 
 
@@ -260,6 +260,18 @@ def main():
     for scene_id in range(5):
         print("Estimating scene", scene_id)
         # TODO
+        view_matrix = np.load(dataset_dir + "view_matrix/"+ str(scene_id) + ".npy")
+        depth = image.read_depth(dataset_dir + "depth/" + str(scene_id) + "_depth.png")
+        pred_mask = image.read_mask(dataset_dir + "pred/" + str(scene_id) + "_pred.png")
+        estimated = estimate_pose(depth, pred_mask, my_camera, view_matrix)
+        save_pose(dataset_dir, "predmask", scene_id, estimated)
+        export_pred_ply(dataset_dir, scene_id, "predmask_transformed", estimated)
+        if args.val:
+            gt_mask = image.read_mask(dataset_dir + "gt/" + str(scene_id) + "_gt.png")
+            estimated = estimate_pose(depth, gt_mask, my_camera, view_matrix)
+            save_pose(dataset_dir, "gtmask" , scene_id, estimated)
+            export_pred_ply(dataset_dir, scene_id, "gtmask_transformed", estimated)
+            export_gt_ply(scene_id, depth, gt_mask, my_camera, view_matrix)
 
 
 if __name__ == '__main__':

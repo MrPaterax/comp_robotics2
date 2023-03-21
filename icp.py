@@ -132,6 +132,10 @@ def estimate_pose(depth, mask, camera, view_matrix):
     """
     # TODO
     list_obj_pose = list()
+    for i in range(1,6):
+        world_pts = obj_depth2pts(i, depth, mask, camera, view_matrix)
+        first_cloud = obj_mesh2pts(i, len(world_pts))
+        list_obj_pose.append(align_pts(first_cloud, world_pts))
     return list_obj_pose
 
 

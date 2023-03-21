@@ -102,7 +102,16 @@ def align_pts(pts_a, pts_b, max_iterations=20, threshold=1e-05):
         scale=False and reflection=False should be passed to both icp() and procrustes().
     """
     # TODO
-    matrix = None
+    try:
+        initial, transformed, cost = trimesh.registration.procrustes(pts_a, pts_b, reflection = False, scale = False)
+    except np.linalg.LinAlgError:
+        return None
+    
+    try:
+        matrix, transformed, cost = trimesh.registration.icp(pts_a, pts_b, initial, threshold = threshold, max_iterations=max_iterations)
+    except np.linalg.LinAlgError:
+        return None
+    
     return matrix
 
 

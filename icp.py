@@ -79,7 +79,10 @@ def obj_depth2pts(obj_id, depth, mask, camera, view_matrix):
         The view matrices are provided in the /dataset/val/view_matrix or /dataset/test/view_matrix folder.
     """
     # TODO
-    world_pts = None
+    obj_depth = gen_obj_depth(obj_id, depth, mask)
+    point_cloud = depth_to_point_cloud(camera.intrinsic_matrix, obj_depth)
+    pose_matrix = cam_view2pose(view_matrix) #camera to world 
+    world_pts = transform_point3s(pose_matrix, point_cloud)
     return world_pts
 
 
